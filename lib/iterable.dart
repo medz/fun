@@ -43,6 +43,44 @@ extension FunIterable<T> on Iterable<T> {
       yield skip(i).take(size);
     }
   }
+
+  /// Creates an object with counts of occurrences of items in an array.
+  ///
+  /// Given an array of objects and an identity callback function to determine
+  /// how each object should be identified. Returns an object where the keys
+  /// are the id values the callback returned and each value is an integer
+  /// telling how many times that id occurred.
+  ///
+  /// Example:
+  ///
+  /// ```dart
+  /// final list = ['a', 'b', 'a', 'c', 'b', 'a'];
+  /// final counts = list.counting((item) => item);
+  /// print(counts); // {a: 3, b: 2, c: 1}
+  ///
+  /// final list2 = [
+  ///   (1, 'a'),
+  ///   (2, 'b'),
+  ///   (3, 'a'),
+  ///   (4, 'c'),
+  ///   (5, 'b'),
+  /// ];
+  /// final counts2 = list2.counting((item) => item.$2);
+  ///
+  /// print(counts2); // {a: 2, b: 2, c: 1}
+  /// ```
+  ///
+  /// - `identity`: The callback function to determine the identity of each
+  /// item.
+  Map<K, int> counting<K>(K Function(T item) identity) {
+    final result = <K, int>{};
+    for (final item in this) {
+      final key = identity(item);
+      result[key] = (result[key] ?? 0) + 1;
+    }
+
+    return result;
+  }
 }
 
 void main(List<String> args) {
@@ -50,7 +88,21 @@ void main(List<String> args) {
   // print(list.alphabetical((item) => item)); // ['a', 'b', 'c']
   // print(list.alphabetical((item) => item, desc: true)); // ['c', 'b', 'a']
 
-  final data = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-  final clusters = data.cluster(3);
-  print(clusters); // [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+  // final data = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  // final clusters = data.cluster(3);
+  // print(clusters); // [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+
+  final list = ['a', 'b', 'a', 'c', 'b', 'a'];
+  final counts = list.counting((item) => item);
+  print(counts); // {a: 3, b: 2, c: 1}
+
+  final list2 = [
+    (1, 'a'),
+    (2, 'b'),
+    (3, 'a'),
+    (4, 'c'),
+    (5, 'b'),
+  ];
+  final counts2 = list2.counting((item) => item.$2);
+  print(counts2); // {a: 2, b: 2, c: 1}
 }
