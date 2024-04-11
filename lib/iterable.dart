@@ -91,6 +91,55 @@ extension FunIterable<T> on Iterable<T> {
   Iterable<T> diff(Iterable<T> other) {
     return where((item) => !other.contains(item));
   }
+
+  /// Split an [Iterable] into two [Iterable]s based on a predicate.
+  ///
+  /// Example:
+  /// ```dart
+  /// final list = [
+  ///   (name: 'Alice', age: 21),
+  ///   (name: 'Bob', age: 25),
+  ///   (name: 'Charlie', age: 30),
+  /// ];
+  /// final (young, old) = list.partition((item) => item.age < 30);
+  /// print(young); // [(name: Alice, age: 21), (name: Bob, age: 25)]
+  /// print(old); // [(name: Charlie, age: 30)]
+  /// ```
+  (List<T>, List<T>) partition(bool Function(T item) condition) {
+    final left = <T>[];
+    final right = <T>[];
+
+    for (final item in this) {
+      if (condition(item)) {
+        left.add(item);
+        continue;
+      }
+
+      right.add(item);
+    }
+
+    return (left, right);
+  }
+}
+
+extension FunIterableFlatten<T> on Iterable<Iterable<T>> {
+  /// Flatten an array of arrays into a single dimensional iterable.
+  ///
+  /// Example:
+  /// ```dart
+  /// final data = [
+  ///   [1, 2, 3],
+  ///   [4, 5, 6],
+  ///   [7, 8, 9],
+  /// ];
+  /// final flattened = data.flat();
+  /// print(flattened); // [1, 2, 3, 4, 5, 6, 7, 8, 9]
+  /// ```
+  Iterable<T> flat() sync* {
+    for (final item in this) {
+      yield* item;
+    }
+  }
 }
 
 void main(List<String> args) {
@@ -116,8 +165,26 @@ void main(List<String> args) {
   // final counts2 = list2.counting((item) => item.$2);
   // print(counts2); // {a: 2, b: 2, c: 1}
 
-  final list1 = [1, 2, 3, 4, 5];
-  final list2 = [1, 2, 3, 4, 6];
-  final diff = list1.diff(list2);
-  print(diff); // [5]
+  // final list1 = [1, 2, 3, 4, 5];
+  // final list2 = [1, 2, 3, 4, 6];
+  // final diff = list1.diff(list2);
+  // print(diff); // [5]
+
+  // final data = [
+  //   [1, 2, 3],
+  //   [4, 5, 6],
+  //   [7, 8, 9],
+  // ];
+
+  // final flattened = data.flat();
+  // print(flattened); // [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+  // final list = [
+  //   (name: 'Alice', age: 21),
+  //   (name: 'Bob', age: 25),
+  //   (name: 'Charlie', age: 30),
+  // ];
+  // final (young, old) = list.partition((item) => item.age < 30);
+  // print(young); // [(name: Alice, age: 21), (name: Bob, age: 25)]
+  // print(old); // [(name: Charlie, age: 30)]
 }
