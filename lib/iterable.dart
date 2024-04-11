@@ -120,6 +120,30 @@ extension FunIterable<T> on Iterable<T> {
 
     return (left, right);
   }
+
+  /// Group an [Iterable] of [T] into a single dimensional iterable.
+  ///
+  /// Example:
+  /// ```dart
+  /// final data = [
+  ///   (name: 'Marlin', skill: 'Dart'),
+  ///   (name: 'Nemo', skill: 'Flutter'),
+  ///   (name: 'Dory', skill: 'Dart'),
+  ///   (name: 'Bruce', skill: 'JS'),
+  /// ];
+  /// final grouped = data.groupBy((item) => item.skill);
+  ///
+  /// print(grouped); // {Dart: [(name: Marlin, skill: Dart), (name: Dory,
+  /// skill: Dart)], Flutter: [(name: Nemo, skill: Flutter)], JS: [(name:
+  /// Bruce, skill: JS)]}
+  /// ```
+  Map<K, List<T>> group<K>(K Function(T item) getter) {
+    return fold(<K, List<T>>{}, (result, item) {
+      final key = getter(item);
+      result[key] = [...(result[key] ?? []), item];
+      return result;
+    });
+  }
 }
 
 extension FunIterableFlatten<T> on Iterable<Iterable<T>> {
@@ -140,51 +164,4 @@ extension FunIterableFlatten<T> on Iterable<Iterable<T>> {
       yield* item;
     }
   }
-}
-
-void main(List<String> args) {
-  // final list = ['c', 'a', 'b'];
-  // print(list.alphabetical((item) => item)); // ['a', 'b', 'c']
-  // print(list.alphabetical((item) => item, desc: true)); // ['c', 'b', 'a']
-
-  // final data = [1, 2, 3, 4, 5, 6, 7, 8, 9];
-  // final clusters = data.cluster(3);
-  // print(clusters); // [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
-
-  // final list = ['a', 'b', 'a', 'c', 'b', 'a'];
-  // final counts = list.counting((item) => item);
-  // print(counts); // {a: 3, b: 2, c: 1}
-
-  // final list2 = [
-  //   (1, 'a'),
-  //   (2, 'b'),
-  //   (3, 'a'),
-  //   (4, 'c'),
-  //   (5, 'b'),
-  // ];
-  // final counts2 = list2.counting((item) => item.$2);
-  // print(counts2); // {a: 2, b: 2, c: 1}
-
-  // final list1 = [1, 2, 3, 4, 5];
-  // final list2 = [1, 2, 3, 4, 6];
-  // final diff = list1.diff(list2);
-  // print(diff); // [5]
-
-  // final data = [
-  //   [1, 2, 3],
-  //   [4, 5, 6],
-  //   [7, 8, 9],
-  // ];
-
-  // final flattened = data.flat();
-  // print(flattened); // [1, 2, 3, 4, 5, 6, 7, 8, 9]
-
-  // final list = [
-  //   (name: 'Alice', age: 21),
-  //   (name: 'Bob', age: 25),
-  //   (name: 'Charlie', age: 30),
-  // ];
-  // final (young, old) = list.partition((item) => item.age < 30);
-  // print(young); // [(name: Alice, age: 21), (name: Bob, age: 25)]
-  // print(old); // [(name: Charlie, age: 30)]
 }
