@@ -144,6 +144,23 @@ extension FunIterable<T> on Iterable<T> {
       return result;
     });
   }
+
+  /// Determine if two [Iterable]s have the same items.
+  ///
+  /// Example:
+  /// ```dart
+  /// final list1 = ['alice', 'bob'];
+  /// final list2 = ['Charlie', 'Dory'];
+  /// final list3 = ['Dory', 'bob'];
+  ///
+  /// print(list1.intersects(list2)); // false
+  /// print(list1.intersects(list3)); // true
+  /// ```
+  ///
+  /// - `other`: The other [Iterable] to compare against.
+  bool intersects(Iterable<T> other) {
+    return any((item) => other.contains(item));
+  }
 }
 
 extension FunIterableFlatten<T> on Iterable<Iterable<T>> {
